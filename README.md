@@ -4,6 +4,8 @@
 
 🌐 **[www.ClawBeacon.xyz](https://www.ClawBeacon.xyz)** — Live Demo & Documentation
 
+🌐 **[www.Bankr.ClawBeacon.xyz](https://bankr.clawbeacon.xyz/)** — Kanban with Bankr LLM Integration
+
 🐦 **[x.com/clawbeacon](https://x.com/clawbeacon)** — Our Official X account
 > 🚧 **Under Active Development** — We're continuously improving this skill! Feedback and contributions welcome.
 
