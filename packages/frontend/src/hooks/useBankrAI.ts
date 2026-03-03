@@ -121,7 +121,7 @@ export function useBankrAI(tasks: Task[], messages: Message[], agents: Agent[]) 
 
       try {
         const reply = await callBankrLLM(
-          newHistory.filter((m) => m.role !== 'system'),
+          newHistory,
           systemPrompt,
         );
         setChatHistory([...newHistory, { role: 'assistant', content: reply }]);
