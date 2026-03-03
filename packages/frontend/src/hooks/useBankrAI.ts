@@ -6,38 +6,29 @@
 import { useState, useCallback } from 'react';
 import type { Task, Message, Agent } from '../types';
 
-const BANKR_BASE = 'https://llm.bankr.bot/v1';
-const BANKR_KEY: string =
-  window.__CLAW_CONFIG__?.BANKR_LLM_KEY ??
-  (import.meta.env.VITE_BANKR_LLM_KEY as string | undefined) ??
+const API_BASE: string =
+  window.__CLAW_CONFIG__?.API_URL ??
+  (import.meta.env.VITE_API_URL as string | undefined) ??
   '';
-const MODEL = 'gemini-3-flash';
 
 // ── API response shape ─────────────────────────────────────────────────────
 interface BankrLLMResponse {
   choices?: { message?: { content?: string } }[];
 }
 
-// ── Core LLM caller ────────────────────────────────────────────────────────
+// ── Core LLM caller — calls backend proxy to avoid CORS ───────────────────
 async function callBankrLLM(
   messages: { role: string; content: string }[],
   systemPrompt?: string,
 ): Promise<string> {
-  if (!BANKR_KEY) throw new Error('VITE_BANKR_LLM_KEY is not set in .env');
-
-  const res = await fetch(`${BANKR_BASE}/chat/completions`, {
+  const res = await fetch(`${API_BASE}/api/ai/chat`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${BANKR_KEY}`,
     },
     body: JSON.stringify({
-      model: MODEL,
-      max_tokens: 1024,
-      messages: [
-        ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
-        ...messages,
-      ],
+      messages,
+      systemPrompt,
     }),
   });
 
