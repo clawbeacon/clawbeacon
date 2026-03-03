@@ -2413,6 +2413,64 @@ async function seedAgentsFromConfig() {
   }
 }
 
+// ── Bankr AI Proxy ────────────────────────────────────────────────────────
+// Proxies requests to Bankr LLM to avoid CORS issues from the browser.
+fastify.post('/api/ai/chat', {
+  schema: {
+    tags: ['AI'],
+    summary: 'Proxy chat request to Bankr LLM',
+    body: {
+      type: 'object',
+      required: ['messages'],
+      properties: {
+        messages: { type: 'array' },
+        systemPrompt: { type: 'string' },
+        model: { type: 'string' },
+        max_tokens: { type: 'number' }
+      }
+    }
+  }
+}, async (request, reply) => {
+  const BANKR_KEY = process.env.BANKR_LLM_KEY || process.env.VITE_BANKR_LLM_KEY || '';
+  if (!BANKR_KEY) {
+    return reply.status(500).send({ error: 'BANKR_LLM_KEY is not set on the server' });
+  }
+
+  const { messages, systemPrompt, model = 'gemini-3-flash', max_tokens = 1024 } = request.body;
+
+  const payload = {
+    model,
+    max_tokens,
+    messages: [
+      ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
+      ...messages
+    ]
+  };
+
+  try {
+    const response = await fetch('https://llm.bankr.bot/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + BANKR_KEY
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return reply.status(response.status).send({ error: data });
+    }
+
+    return reply.send(data);
+  } catch (err) {
+    fastify.log.error('Bankr LLM proxy error:', err);
+    return reply.status(500).send({ error: 'Failed to reach Bankr LLM' });
+  }
+});
+
+
 /**
  * Starts the Fastify server.
  * Verifies database connection, seeds agents if needed, and listens on configured port.
