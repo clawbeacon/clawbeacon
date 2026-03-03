@@ -70,7 +70,7 @@ export function useBankrAI(tasks: Task[], messages: Message[], agents: Agent[]) 
     {
       role: 'assistant',
       content:
-        'Hello! I'm your Claw Beacon AI assistant powered by Bankr LLM. Ask me anything about your tasks, agents, or project! 🦞',
+        "Hello! I'm your Claw Beacon AI assistant powered by Bankr LLM. Ask me anything about your tasks, agents, or project! 🦞",
     },
   ]);
   const [chatLoading, setChatLoading] = useState(false);
