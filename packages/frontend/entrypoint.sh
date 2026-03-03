@@ -15,6 +15,13 @@ elif [ -n "$API_URL" ]; then
   echo "  API_URL: \"$API_URL\"," >> $CONFIG_FILE
 fi
 
+# Bankr LLM Key - required for AI features
+if [ -n "$VITE_BANKR_LLM_KEY" ]; then
+  echo "  BANKR_LLM_KEY: \"$VITE_BANKR_LLM_KEY\"," >> $CONFIG_FILE
+elif [ -n "$BANKR_LLM_KEY" ]; then
+  echo "  BANKR_LLM_KEY: \"$BANKR_LLM_KEY\"," >> $CONFIG_FILE
+fi
+
 echo "};" >> $CONFIG_FILE
 
 echo "Generated config.js:"
