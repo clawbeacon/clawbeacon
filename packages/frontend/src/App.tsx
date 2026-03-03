@@ -5,6 +5,7 @@ import { AgentsList } from './components/AgentsList';
 import { KanbanBoard } from './components/KanbanBoard';
 import { AgentChat } from './components/AgentChat';
 import { useAgents, useTasks, useMessages, useSSE, transformAgent, transformTask } from './hooks/useApi';
+import { BankrAIPanel } from './components/BankrAIPanel';
 import type { Agent, Task, Message, TaskStatus } from './types';
 
 type MobileView = 'agents' | 'board' | 'chat';
@@ -104,6 +105,7 @@ function MobileNav({ activeView, onViewChange, agentCount, messageCount }: Mobil
 function Dashboard() {
   const [mobileView, setMobileView] = useState<MobileView>('board');
   const [feedCollapsed, setFeedCollapsed] = useState(false);
+  const [bankrAICollapsed, setBankrAICollapsed] = useState(false);
   const { agents, setAgents, loading: agentsLoading } = useAgents();
   const { kanban, loading: tasksLoading, moveTask, setTasks, loadMoreCompleted, completedLoadingMore, completedHasMore } = useTasks();
   const { messages, loading: messagesLoading, addMessage, loadMore: loadMoreMessages, loadingMore: messagesLoadingMore, hasMore: messagesHasMore } = useMessages();
@@ -195,6 +197,20 @@ function Dashboard() {
             loadMore={loadMoreMessages}
             collapsed={feedCollapsed}
             onToggleCollapse={() => setFeedCollapsed(!feedCollapsed)}
+          />
+        </aside>
+
+        {/* Bankr AI Panel (Collapsible) */}
+        <aside className={`border-l border-white/5 bg-claw-surface/50 flex-shrink-0 overflow-hidden transition-all duration-300 ${
+          bankrAICollapsed ? 'w-12' : 'w-80'
+        }`}>
+          <BankrAIPanel
+            tasks={kanban.backlog.concat(kanban.todo, kanban.in_progress, kanban.review, kanban.completed)}
+            messages={messages}
+            agents={agents}
+            collapsed={bankrAICollapsed}
+            onToggleCollapse={() => setBankrAICollapsed(!bankrAICollapsed)}
+            onTasksCreated={() => {}}
           />
         </aside>
       </main>
