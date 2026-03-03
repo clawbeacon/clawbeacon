@@ -29,7 +29,7 @@ async function callBankrLLM(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-API-Key': BANKR_KEY,
+      'Authorization': `Bearer ${BANKR_KEY}`,
     },
     body: JSON.stringify({
       model: MODEL,
